@@ -12,18 +12,21 @@ import java.util.Map;
 import java.util.Set;
 
 public class Server {
-    public static final String PATH = "storage";
-    public static final String FILE_NAME = "messageStorage.json";
-
     private ServerSocket serverSocket;
     private static AllUsersStore usersStore = new AllUsersStore();
     private static AllMessagesStore allMessagesStore = new AllMessagesStore();
     private static volatile boolean isServerStart = false;
 
-    Converter converter = new Converter(new File(PATH), new File(PATH, FILE_NAME));
+    Converter converter;
+    private int port;
     private Thread read;
 
-    public void startServer(int port) {
+    public Server(int port, String storagePath, String storageFileName) {
+        this.port = port;
+        converter = new Converter(new File(storagePath), new File(storagePath, storageFileName));
+    }
+
+    public void startServer() {
         Map<Date, String> messages = converter.toJavaObject();
         if (messages != null) {
             allMessagesStore.setAllMessages(messages);
@@ -31,7 +34,7 @@ public class Server {
         try {
             serverSocket = new ServerSocket(port);
             isServerStart = true;
-            Log.LOG_SERVER.debug("Server start.\n");
+            Log.LOG_SERVER.debug("Сервер запущен");
             System.out.println("Сервер запущен.\n");
             read = new Thread(new MessageServerWriter(this));
             read.start();
@@ -49,7 +52,7 @@ public class Server {
                 }
                 serverSocket.close();
                 usersStore.getAllUsersMultiChat().clear();
-                Log.LOG_SERVER.debug("Server stop.\n");
+                Log.LOG_SERVER.debug("Server stop");
                 System.out.println("Сервер остановлен.\n");
             } else
                 System.out.println("Сервер не запущен - останавливать нечего!\n");

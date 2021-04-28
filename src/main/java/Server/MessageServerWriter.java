@@ -27,7 +27,7 @@ public class MessageServerWriter implements Runnable {
                 if (messageText.equals("stop")) {
                     server.stopServer();
                 } else if (messageText.equals("start")) {
-                    server.startServer(8000);
+                    server.startServer();
                     server.acceptServer();
                 }
             } catch (Exception e) {
