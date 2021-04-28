@@ -52,7 +52,7 @@ public class Server {
                 }
                 serverSocket.close();
                 usersStore.getAllUsersMultiChat().clear();
-                Log.LOG_SERVER.debug("Server stop");
+                Log.LOG_SERVER.debug("Сервер остановлен");
                 System.out.println("Сервер остановлен.\n");
             } else
                 System.out.println("Сервер не запущен - останавливать нечего!\n");
