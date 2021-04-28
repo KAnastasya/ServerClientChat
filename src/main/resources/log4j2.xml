@@ -6,7 +6,7 @@
             <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
         </Console>
         <RollingFile name="rollingFile"
-                     fileName="logs/log.txt"
+                     fileName="logs/log.log"
                      filePattern="logs/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.log.gz">
             <PatternLayout>
                 <Pattern>%d %p %c{1.} [%t] %m%n</Pattern>
@@ -21,26 +21,29 @@
 
     <Loggers>
         <Logger name="Server" level="debug" additivity="false">
-            <AppenderRef ref="Console"/>
+            <AppenderRef ref="rollingFile"/>
         </Logger>
-        <Logger name="Client" level="debug" additivity="false">
-            <AppenderRef ref="Console"/>
+        <Logger name="Client" level="info" additivity="false">
+            <AppenderRef ref="rollingFile"/>
         </Logger>
-        <Logger name="MessageReader" level="debug" additivity="false">
-            <AppenderRef ref="Console"/>
+        <Logger name="MessageReader" level="info" additivity="false">
+            <AppenderRef ref="rollingFile"/>
         </Logger>
-        <Logger name="MessageWriter" level="debug" additivity="false">
-            <AppenderRef ref="Console"/>
+        <Logger name="MessageWriter" level="info" additivity="false">
+            <AppenderRef ref="rollingFile"/>
         </Logger>
-        <Logger name="Converter" level="debug" additivity="false">
-            <AppenderRef ref="Console"/>
+        <Logger name="Converter" level="info" additivity="false">
+            <AppenderRef ref="rollingFile"/>
         </Logger>
-        <Logger name="MessageServerWriter" level="debug" additivity="false">
-            <AppenderRef ref="Console"/>
+        <Logger name="MessageServerWriter" level="info" additivity="false">
+            <AppenderRef ref="rollingFile"/>
+        </Logger>
+        <Logger name="PropertyReader" level="info" additivity="false">
+            <AppenderRef ref="rollingFile"/>
         </Logger>
         <!-- Root Logger -->
-        <Root level="all">
-            <AppenderRef ref="Console"/>
+        <Root level="info">
+            <AppenderRef ref="rollingFile"/>
         </Root>
     </Loggers>
 

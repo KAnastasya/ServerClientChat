@@ -12,4 +12,5 @@ public class Log {
     public static final Logger LOG_MESSAGE_READER = LogManager.getLogger("MessageReader");
     public static final Logger LOG_CONVERTER = LogManager.getLogger("Converter");
     public static final Logger LOG_MESSAGE_SERVER_WRITER = LogManager.getLogger("MessageServerWriter");
+    public static final Logger LOG_PROPERTY_READER = LogManager.getLogger("PropertyReader");
 }

@@ -9,7 +9,8 @@ import java.net.Socket;
 import java.util.*;
 
 public class Client {
-
+    private String serverAddress;
+    private int port;
     private Connection connection;
     private AllClientsSet allClientsSet = new AllClientsSet();
     private Map<Date, String> allMessages = new HashMap<>();
@@ -25,12 +26,13 @@ public class Client {
         isConnect = connect;
     }
 
-    public Client() {
-        Log.LOG_CLIENT.debug("test");
-        this.initializeClient();
+    public Client(String serverAddress, int port) {
+        this.serverAddress = serverAddress;
+        this.port = port;
+        this.initializeClient(serverAddress, port);
     }
 
-    protected void nameUserRegistration() {
+    public void nameUserRegistration() {
         while (true) {
             try {
                 Message message = connection.receive();
@@ -68,34 +70,26 @@ public class Client {
         }
     }
 
-    protected void connectToServer() {
+    public void connectToServer(String serverAddress, int port) {
         if (!isConnect) {
             while (true) {
                 try {
-                    System.out.println("Попытка подключиться к серверу");
-                    Scanner in = new Scanner(System.in);
-
-                    System.out.println("Введите адресс");
-                    String address = in.nextLine();
-                    //InetAddress address = InetAddress.getLocalHost();
-
-                    System.out.println("Введите порт");
-                    int port = in.nextInt();
-
-                    Socket socket = new Socket(address, port);
+                    Log.LOG_CLIENT.debug("Попытка подключения к серверу: " + serverAddress + ":" + port);
+                    Socket socket = new Socket(serverAddress, port);
                     connection = new Connection(socket);
                     isConnect = true;
-                    System.out.println("Сервисное сообщение: Вы подключились к серверу.\n");
+                    System.out.println("Вы подключились к серверу.\n");
+                    Log.LOG_CLIENT.debug("Произошло подключение к серверу: " + serverAddress + ":" + port);
                     break;
                 } catch (Exception e) {
-                    Log.LOG_CLIENT.error("Произошла ошибка! Возможно Вы ввели не верный порт, или нет соединения с сервером. Попробуйте еще раз " + e.getMessage());
+                    Log.LOG_CLIENT.error("Произошла ошибка! Возможно нет соединения с сервером. " + e.getMessage());
                     break;
                 }
             }
         } else System.out.println("Вы уже подключены!");
     }
 
-    protected void sendMessageOnServer(String msg) {
+    public void sendMessageOnServer(String msg) {
         if (isConnect) {
             try {
                 if (msg.equals("stop")) {
@@ -108,14 +102,14 @@ public class Client {
         } else {
             System.out.println("Невозможно отправить сообщение. Попытка повторного подключения к серверу");
             try {
-                this.initializeClient();
+                this.initializeClient(serverAddress, port);
             } catch (Exception e) {
                 Log.LOG_CLIENT.error("Ошибка при отправке сообщения " + e.getMessage());
             }
         }
     }
 
-    protected void receiveMessageFromServer() {
+    public void receiveMessageFromServer() {
         while (isConnect) {
             try {
                 Message message = connection.receive();
@@ -152,7 +146,7 @@ public class Client {
         }
     }
 
-    protected void disableClient() {
+    public void disableClient() {
         try {
             if (isConnect) {
                 connection.send(new Message(MessageType.DISABLE_USER));
@@ -165,19 +159,19 @@ public class Client {
         }
     }
 
-    protected Map<Date, String> sortMessages(Map<Date, String> allMessages) {
+    public Map<Date, String> sortMessages(Map<Date, String> allMessages) {
         Map<Date, String> sortedMap = new TreeMap<>(Comparator.comparing(Date::toString));
         sortedMap.putAll(allMessages);
         return sortedMap;
     }
 
-    protected Set<String> getClientsSet() {
+    public Set<String> getClientsSet() {
         return allClientsSet.getUsers();
     }
 
-    protected void initializeClient() {
+    private void initializeClient(String serverAddress, int port) {
         try {
-            this.connectToServer();
+            this.connectToServer(serverAddress, port);
             this.nameUserRegistration();
             read = new Thread(new MessageReader(this));
             read.start();
